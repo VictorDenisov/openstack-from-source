@@ -33,13 +33,32 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 		end
 	end
 
-	config.vm.define "mysql" do |mysql|
-		mysql.vm.network "private_network", ip: MYSQL_IP
-		mysql.vm.provision "puppet" do |puppet|
+	config.vm.define "mysql-master" do |mysql_master|
+		mysql_master.vm.network "private_network", ip: MYSQL_IP
+		mysql_master.vm.synced_folder ".", "/vagrant", nfs: true
+		mysql_master.vm.provision "puppet" do |puppet|
 			puppet.module_path = "modules"
 			puppet.manifests_path = "manifests"
-			puppet.manifest_file = "mysql.pp"
-			puppet.hiera_config_path = "hiera_mysql.yaml"
+			puppet.manifest_file = "mysql_master.pp"
+			puppet.hiera_config_path = "hiera_mysql_master.yaml"
+			puppet.facter = {
+				"ip" => MYSQL_IP,
+			}
+		end
+		config.vm.provider :virtualbox do |vb|
+			vb.customize ["modifyvm", :id, "--cpus", "1"]
+			vb.customize ["modifyvm", :id, "--memory", "1024"]
+		end
+	end
+
+	config.vm.define "mysql-slave" do |mysql_slave|
+		mysql_slave.vm.network "private_network", ip: MYSQL_IP
+		mysql_slave.vm.synced_folder ".", "/vagrant", nfs: true
+		mysql_slave.vm.provision "puppet" do |puppet|
+			puppet.module_path = "modules"
+			puppet.manifests_path = "manifests"
+			puppet.manifest_file = "mysql_slave.pp"
+			puppet.hiera_config_path = "hiera_mysql_slave.yaml"
 			puppet.facter = {
 				"ip" => MYSQL_IP,
 			}

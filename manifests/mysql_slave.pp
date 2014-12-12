@@ -21,11 +21,11 @@ class { '::mysql::server':
 
 class { '::mysql::client': }
 
-exec { '/bin/hostname mysql': }
+exec { '/bin/hostname mysql-slave': }
 
 file { '/etc/hostname':
 	ensure  => file,
-	content => 'mysql',
+	content => 'mysql-slave',
 	owner   => 'root',
 	group   => 'root',
 }
