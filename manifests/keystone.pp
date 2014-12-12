@@ -1,5 +1,12 @@
-exec { '/usr/bin/apt-get update': }
+stage { 'first':
+	before => Stage['main'],
+}
 
+class { 'apt':
+	always_apt_update => true,
+	fancy_progress    => true,
+	stage             => first,
+}
 package { 'git':
 	ensure => present,
 }

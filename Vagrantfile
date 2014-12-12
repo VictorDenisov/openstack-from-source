@@ -5,6 +5,7 @@
 VAGRANTFILE_API_VERSION = "2"
 
 KEYSTONE_IP = "172.15.0.30" # keystone ip is from management network
+MYSQL_IP    = "172.15.0.31" # mysql ip is from management network
 
 MGMT_IP = "172.15.0.7"
 PUBLIC_IP = "172.30.1.8"
@@ -24,6 +25,23 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			puppet.hiera_config_path = "hiera_keystone.yaml"
 			puppet.facter = {
 				"ip" => KEYSTONE_IP,
+			}
+		end
+		config.vm.provider :virtualbox do |vb|
+			vb.customize ["modifyvm", :id, "--cpus", "1"]
+			vb.customize ["modifyvm", :id, "--memory", "1024"]
+		end
+	end
+
+	config.vm.define "mysql" do |mysql|
+		mysql.vm.network "private_network", ip: MYSQL_IP
+		mysql.vm.provision "puppet" do |puppet|
+			puppet.module_path = "modules"
+			puppet.manifests_path = "manifests"
+			puppet.manifest_file = "mysql.pp"
+			puppet.hiera_config_path = "hiera_mysql.yaml"
+			puppet.facter = {
+				"ip" => MYSQL_IP,
 			}
 		end
 		config.vm.provider :virtualbox do |vb|
