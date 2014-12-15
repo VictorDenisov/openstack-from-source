@@ -19,7 +19,13 @@ $override_options = {
 
 class { '::mysql::server':
   root_password    => 'mysql_password',
-  override_options => $override_options
+  override_options => $override_options,
+  databases        => {
+	  'keystone' => {
+		  'ensure'  => 'present',
+		  'charset' => 'utf8',
+	  }
+  },
 }
 
 class { '::mysql::client': }

@@ -9,14 +9,25 @@ class { 'apt':
 }
 
 $override_options = {
-  'section' => {
-    'item' => 'thing',
+  'mysqld'         => {
+    'server-id'    => 2,
+    'bind-address' => $ip,
+    'log_bin'      => '/var/log/mysql/mysql-bin.log',
+    'relay-log'    => '/var/log/mysql/mysql-relay-bin.log',
+    'binlog_do_db' => 'keystone',
   }
 }
 
 class { '::mysql::server':
   root_password    => 'mysql_password',
-  override_options => $override_options
+  override_options => $override_options,
+  databases        => {
+	  'keystone' => {
+		  'ensure'  => 'present',
+		  'charset' => 'utf8',
+	  }
+
+  },
 }
 
 class { '::mysql::client': }

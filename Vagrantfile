@@ -5,7 +5,8 @@
 VAGRANTFILE_API_VERSION = "2"
 
 KEYSTONE_IP = "172.15.0.30" # keystone ip is from management network
-MYSQL_IP    = "172.15.0.31" # mysql ip is from management network
+MYSQL_MASTER_IP    = "172.15.0.31" # mysql ip is from management network
+MYSQL_SLAVE_IP    = "172.15.0.32" # mysql ip is from management network
 
 MGMT_IP = "172.15.0.7"
 PUBLIC_IP = "172.30.1.8"
@@ -34,7 +35,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 	end
 
 	config.vm.define "mysql-master" do |mysql_master|
-		mysql_master.vm.network "private_network", ip: MYSQL_IP
+		mysql_master.vm.network "private_network", ip: MYSQL_MASTER_IP
 		mysql_master.vm.synced_folder ".", "/vagrant", nfs: true
 		mysql_master.vm.provision "puppet" do |puppet|
 			puppet.module_path = "modules"
@@ -42,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			puppet.manifest_file = "mysql_master.pp"
 			puppet.hiera_config_path = "hiera_mysql_master.yaml"
 			puppet.facter = {
-				"ip" => MYSQL_IP,
+				"ip" => MYSQL_MASTER_IP,
 			}
 		end
 		config.vm.provider :virtualbox do |vb|
@@ -50,9 +51,8 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			vb.customize ["modifyvm", :id, "--memory", "1024"]
 		end
 	end
-
 	config.vm.define "mysql-slave" do |mysql_slave|
-		mysql_slave.vm.network "private_network", ip: MYSQL_IP
+		mysql_slave.vm.network "private_network", ip: MYSQL_SLAVE_IP
 		mysql_slave.vm.synced_folder ".", "/vagrant", nfs: true
 		mysql_slave.vm.provision "puppet" do |puppet|
 			puppet.module_path = "modules"
@@ -60,7 +60,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			puppet.manifest_file = "mysql_slave.pp"
 			puppet.hiera_config_path = "hiera_mysql_slave.yaml"
 			puppet.facter = {
-				"ip" => MYSQL_IP,
+				"ip" => MYSQL_SLAVE_IP,
 			}
 		end
 		config.vm.provider :virtualbox do |vb|
