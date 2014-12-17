@@ -37,6 +37,11 @@ package { 'python-pip':
 	before => Exec['requirements'],
 }
 
+package { 'python-mysqldb':
+	ensure => present,
+	before => Exec['requirements'],
+}
+
 exec { 'requirements':
 	command => '/usr/bin/pip install -r /vagrant/keystone/requirements.txt',
 }
