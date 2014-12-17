@@ -24,8 +24,35 @@ class { '::mysql::server':
 	  'keystone' => {
 		  'ensure'  => 'present',
 		  'charset' => 'utf8',
-	  }
+	  },
   },
+  grants           => {
+	  'keystone_user@localhost/keystone.*' => {
+		  ensure     => 'present',
+		  options    => ['GRANT'],
+		  privileges => ['ALL'],
+		  table      => ['keystone.*'],
+		  user       => ['keystone_user@localhost'],
+	  },
+	  'keystone_user@%/keystone.*' => {
+		  ensure     => 'present',
+		  options    => ['GRANT'],
+		  privileges => ['ALL'],
+		  table      => ['keystone.*'],
+		  user       => ['keystone_user@%'],
+	  },
+  },
+  users                      => {
+	  'keystone_user@localhost' => {
+		  ensure                   => present,
+		  password_hash            => '*8D713EFB625D51B3BFB9837108F7E2232EAEC017', # keystone_pass
+	  },
+	  'keystone_user@%' => {
+		  ensure                   => present,
+		  password_hash            => '*8D713EFB625D51B3BFB9837108F7E2232EAEC017', # keystone_pass
+	  },
+  },
+  restart => true,
 }
 
 class { '::mysql::client': }

@@ -26,6 +26,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 			puppet.hiera_config_path = "hiera_keystone.yaml"
 			puppet.facter = {
 				"ip" => KEYSTONE_IP,
+				"mysql_ip" => MYSQL_MASTER_IP,
 			}
 		end
 		config.vm.provider :virtualbox do |vb|

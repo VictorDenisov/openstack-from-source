@@ -45,3 +45,11 @@ file { 'keystone.conf':
 	path   => '/vagrant/keystone/etc/keystone.conf',
 	source => 'file:///vagrant/keystone/etc/keystone.conf.sample',
 }
+
+augeas { 'keystone-conf':
+	lens    => 'Pythonpaste.lns',
+	incl    => '/vagrant/keystone/etc/keystone.conf',
+	changes => [ "set /files/vagrant/keystone/etc/keystone.conf/database/connection mysql://keystone_user:keystone_pass@${::mysql_ip}/keystone",
+		     "set /files/vagrant/keystone/etc/keystone.conf/DEFAULT/admin_token ADMIN_TOKEN", ],
+	require => File['keystone.conf'],
+}
