@@ -61,5 +61,5 @@ augeas { 'keystone-conf':
 
 exec { 'keystone-start':
 	command => '/vagrant/aux_scripts/start_keystone.sh',
-	require => Augeas['keystone-conf'],
+	require => [Augeas['keystone-conf'], Exec['requirements']],
 }
