@@ -58,3 +58,8 @@ augeas { 'keystone-conf':
 		     "set /files/vagrant/keystone/etc/keystone.conf/DEFAULT/admin_token ADMIN_TOKEN", ],
 	require => File['keystone.conf'],
 }
+
+exec { 'keystone-start':
+	command => '/vagrant/aux_scripts/start_keystone.sh',
+	require => Augeas['keystone-conf'],
+}

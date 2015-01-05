@@ -2,6 +2,7 @@
 
 if [ $# -lt 1 ]; then
 	echo "Need at least one argument"
+	echo "This argument should be keystone's ip"
 	exit 1
 fi
 
