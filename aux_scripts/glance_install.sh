@@ -1,4 +1,4 @@
 #!/bin/bash
 
-cd glance
+cd /vagrant/glance
 python setup.py install

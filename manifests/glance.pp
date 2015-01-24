@@ -51,14 +51,35 @@ exec { 'requirements':
 }
 
 exec { 'glance-install':
-	command => '/vagrant/glance_install.sh',
+	command => '/vagrant/aux_scripts/glance_install.sh',
 	require => [Exec['requirements']],
 }
 
-#file { 'keystone.conf':
-#	path   => '/vagrant/keystone/etc/keystone.conf',
-#	source => 'file:///vagrant/keystone/etc/keystone.conf.sample',
-#}
+file { 'glance-conf-dir':
+	path    => '/etc/glance',
+	ensure  => directory,
+	require => [Exec['glance-install'],],
+}
+
+file { 'glance-api.conf':
+	path   => '/etc/glance/glance-api.conf',
+	source => 'file:///vagrant/glance/etc/glance-api.conf',
+}
+
+file { 'glance-api-paste.ini':
+	path   => '/etc/glance/glance-api-paste.ini',
+	source => 'file:///vagrant/glance/etc/glance-api-paste.ini',
+}
+
+file { 'glance-registry.conf':
+	path   => '/etc/glance/glance-registry.conf',
+	source => 'file:///vagrant/glance/etc/glance-registry.conf',
+}
+
+file { 'glance-registry-paste.ini':
+	path   => '/etc/glance/glance-registry-paste.ini',
+	source => 'file:///vagrant/glance/etc/glance-registry-paste.ini',
+}
 
 #augeas { 'keystone-conf':
 #	lens    => 'Pythonpaste.lns',
